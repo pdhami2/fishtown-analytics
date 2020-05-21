@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: prod
+    database: fa--interview-task
+    schema: interview
+    freshness:
+      warn_after: {count: 10, period: hour}
+    tables:
+      - name: addresses
+      - name: devices
+      - name: payments
+      - name: orders
