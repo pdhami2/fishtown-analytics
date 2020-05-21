@@ -1,0 +1,79 @@
+version: 2
+models:
+  - name: core__orders
+    description: This table contains the detailed information on Orders.
+    columns:
+        - name: order_id
+          description: This is a unique identifier
+          tests:
+              - unique
+              - not_null
+        
+        - name: user_id
+          description: User_id
+
+        - name: created_at
+          description: Timestamp when Order is created
+
+        - name: updated_at
+          description: Timestamp when Order is updated
+
+        - name: shipped_at
+          description: Timestamp when Order is shipped
+
+        - name: currency
+          description: Order Payment Currency
+
+        - name: order_status
+          description: Current Status of the Order
+
+        - name: order_status_category
+          description: Cleaned Category of Order. If Order is completed, shipped or paid, it is considered as completed
+
+        - name: country_type
+          description: Country cleaned. If non 'US' then it's considered international.
+
+        - name: shipping_method
+          description: Shipping Method of the Order
+
+        - name: purchase_device_type
+          description: Device Type while Order execution
+
+        - name: purchase_device
+          description: Purchase Device 
+
+        - name: user_type
+          description: New or Repeat User
+
+        - name: amount_total_cents
+          description: Amount Received in Cents
+
+        - name: gross_total_amount_cents
+          description: Amount Received from Completed Payments
+
+        - name: total_amount_cents
+          description: Total amount for the Order
+
+        - name: gross_tax_amount_cents
+          description: Tax from Completed Payments
+
+        - name: gross_shipping_amount_cents
+          description: Shipping Amount received from Completed Payments
+
+        - name: amount_total
+          description: Total amount in dollars
+
+        - name: gross_total_amount
+          description: Total amount from Completed Payments
+
+        - name: total_amount
+          description: Total amount in dollars
+
+        - name: gross_tax_amount
+          description: Total tax from Completed Payments
+
+        - name: gross_amount
+          description: Total amount from completed payments
+
+        - name: gross_shipping_amount
+          description: Total shipping amount from completed payments
