@@ -1,6 +1,15 @@
 {{ config(materialized='table') }}
 
-with payments_aggregated as ( 
+{{
+   generate_references([
+            'stg_prod__addresses'
+          , 'stg_prod__devices'
+          , 'stg_prod__orders'
+          , 'stg_prod__payments'
+   ])
+}},
+
+payments_aggregated as ( 
 
     select 
         order_id
@@ -8,7 +17,7 @@ with payments_aggregated as (
       , sum( case when status = 'completed' then amount_cents else 0 end ) as gross_amount_cents
       , sum( case when status = 'completed' then amount_shipping_cents else 0 end ) as gross_shipping_amount_cents
       , sum( case when status = 'completed' then tax_amount_cents + amount_cents + amount_shipping_cents else 0 end ) as gross_total_amount_cents 
-    from `fa--interview-task.interview.payments` 
+    from stg_prod__payments 
     group by order_id 
     
 ),
@@ -18,7 +27,7 @@ first_order as (
     select 
          fo.user_id
        , min(fo.order_id) as first_order_id 
-    from `fa--interview-task.interview.orders` as fo 
+    from stg_prod__orders as fo 
     where fo.status != 'cancelled' 
     group by fo.user_id 
     
@@ -30,7 +39,7 @@ devices as (
          distinct 
          cast(d.type_id as int64) as order_id
        , first_value(d.device) over ( partition by d.type_id order by d.created_at rows between unbounded preceding and unbounded following ) as device    
-    from `fa--interview-task.interview.devices` d 
+    from stg_prod__devices d 
     where d.type = 'order'
      
 ),
@@ -71,14 +80,14 @@ joined as (
        , pa.gross_tax_amount_cents
        , pa.gross_amount_cents
        , pa.gross_shipping_amount_cents 
-    from `fa--interview-task.interview.orders` o 
+    from stg_prod__orders o 
     left join devices as d 
     on d.order_id = o.order_id 
 
     left join first_order as fo 
     on o.user_id = fo.user_id 
 
-    left join `fa--interview-task.interview.addresses` oa 
+    left join stg_prod__addresses oa 
     on oa.order_id = o.order_id 
     left join  payments_aggregated as pa 
     on pa.order_id = o.order_id
