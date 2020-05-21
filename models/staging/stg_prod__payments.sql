@@ -1,2 +1,2 @@
 select *
-from `fa--interview-task.interview.payments`
+from {{ source('prod', 'payments') }}
