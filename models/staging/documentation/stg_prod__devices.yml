@@ -1,0 +1,4 @@
+version: 2
+models:
+  - name: stg_prod__devices
+    description: This table contains the device information

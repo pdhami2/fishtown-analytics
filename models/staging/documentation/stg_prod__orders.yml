@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: stg_prod__orders
+    description: This table contains the order information
+    columns:
+        - name: order_id
+          description: This is a unique idetifier
+          tests:
+              - unique
+              - not_null
