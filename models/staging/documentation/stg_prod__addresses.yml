@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: stg_prod__addresses
+    description: This table contains the addresses of users for each order_id
+    columns:
+        - name: order_id
+          description: This is a unique identifier
+          tests:
+              - not_null
