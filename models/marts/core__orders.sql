@@ -9,6 +9,7 @@
    ])
 }},
 
+--Aggregate completed payments
 payments_aggregated as ( 
 
     select 
@@ -22,28 +23,31 @@ payments_aggregated as (
     
 ),
 
+--First Order of user
 first_order as (
     
     select 
-         fo.user_id
-       , min(fo.order_id) as first_order_id 
-    from stg_prod__orders as fo 
-    where fo.status != 'cancelled' 
-    group by fo.user_id 
+         user_id
+       , min(order_id) as first_order_id 
+    from stg_prod__orders 
+    where status != 'cancelled' 
+    group by user_id 
     
 ),
 
+--First device used to place Order
 devices as (
 
     select
          distinct 
-         cast(d.type_id as int64) as order_id
-       , first_value(d.device) over ( partition by d.type_id order by d.created_at rows between unbounded preceding and unbounded following ) as device    
-    from stg_prod__devices d 
-    where d.type = 'order'
+         cast(type_id as int64) as order_id
+       , first_value(device) over ( partition by type_id order by created_at rows between unbounded preceding and unbounded following ) as device    
+    from stg_prod__devices 
+    where type = 'order'
      
 ),
 
+--Denormalization
 joined as (
 
     select 
@@ -80,14 +84,14 @@ joined as (
        , pa.gross_tax_amount_cents
        , pa.gross_amount_cents
        , pa.gross_shipping_amount_cents 
-    from stg_prod__orders o 
+    from stg_prod__orders as o 
     left join devices as d 
     on d.order_id = o.order_id 
 
     left join first_order as fo 
     on o.user_id = fo.user_id 
 
-    left join stg_prod__addresses oa 
+    left join stg_prod__addresses as oa 
     on oa.order_id = o.order_id 
     left join  payments_aggregated as pa 
     on pa.order_id = o.order_id

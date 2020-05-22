@@ -8,5 +8,7 @@
       updated_at='updated_at',
     )
 }}
-select * from {{ source('prod', 'orders') }}
+
+select * 
+from {{ source('prod', 'orders') }}
 {% endsnapshot %}
